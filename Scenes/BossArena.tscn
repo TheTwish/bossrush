@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=3 uid="uid://kvgke3yht4hl"]
+
+[ext_resource type="PackedScene" uid="uid://cjoh7n4wq7fn" path="res://Scenes/SlimeBoss.tscn" id="2_prly3"]
+[ext_resource type="PackedScene" uid="uid://mmbvej4b6kma" path="res://Scenes/Player.tscn" id="3_0lumg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ycwjk"]
+size = Vector2(1025, 20)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prly3"]
+bg_color = Color(0.215902, 0.215902, 0.215902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qfkhn"]
+bg_color = Color(0.835294, 0, 0, 1)
+
+[node name="BossArena" type="Node2D"]
+
+[node name="Floor" type="StaticBody2D" parent="." groups=["floor"]]
+position = Vector2(535, 566)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" groups=["floor"]]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_ycwjk")
+
+[node name="ColorRect" type="ColorRect" parent="Floor/CollisionShape2D" groups=["floor"]]
+offset_left = -512.0
+offset_top = -10.0
+offset_right = 511.0
+offset_bottom = 10.0
+color = Color(0, 0, 0, 1)
+
+[node name="Player" parent="." instance=ExtResource("3_0lumg")]
+position = Vector2(578, 321)
+scale = Vector2(0.139615, 0.139615)
+collision_mask = 16
+
+[node name="BossBase" parent="." instance=ExtResource("2_prly3")]
+position = Vector2(1057, 373)
+scale = Vector2(0.244518, 0.244518)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="BossHealthBar" type="ProgressBar" parent="UI"]
+custom_minimum_size = Vector2(300, 30)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_prly3")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qfkhn")
+step = 0.1
+value = 50.0
+show_percentage = false
