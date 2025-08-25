@@ -30,6 +30,44 @@ offset_right = 511.0
 offset_bottom = 10.0
 color = Color(0, 0, 0, 1)
 
+[node name="Platform" type="StaticBody2D" parent="." groups=["floor"]]
+position = Vector2(283, 430)
+scale = Vector2(0.32, 1)
+collision_layer = 32
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform" groups=["floor"]]
+position = Vector2(0.5, 0)
+scale = Vector2(1, 0.519998)
+shape = SubResource("RectangleShape2D_ycwjk")
+one_way_collision = true
+
+[node name="ColorRect" type="ColorRect" parent="Platform/CollisionShape2D" groups=["floor"]]
+offset_left = -512.0
+offset_top = -10.0
+offset_right = 511.0
+offset_bottom = 10.0
+color = Color(0, 0, 0, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="." groups=["floor"]]
+position = Vector2(822, 430)
+scale = Vector2(0.32, 0.24)
+collision_layer = 32
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2" groups=["floor"]]
+position = Vector2(0.5, 0)
+scale = Vector2(1, 2.33332)
+shape = SubResource("RectangleShape2D_ycwjk")
+one_way_collision = true
+
+[node name="ColorRect" type="ColorRect" parent="Platform2/CollisionShape2D" groups=["floor"]]
+offset_left = -512.0
+offset_top = -10.0
+offset_right = 511.0
+offset_bottom = 10.0
+color = Color(0, 0, 0, 1)
+
 [node name="Player" parent="." instance=ExtResource("3_0lumg")]
 position = Vector2(578, 321)
 scale = Vector2(0.139615, 0.139615)
@@ -50,6 +88,20 @@ anchor_bottom = 1.0
 offset_top = -1.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_prly3")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qfkhn")
+step = 0.1
+value = 50.0
+show_percentage = false
+
+[node name="PlayerHealthBar" type="ProgressBar" parent="UI"]
+custom_minimum_size = Vector2(600, 30)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_bottom = 30.0
+grow_horizontal = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_prly3")
 theme_override_styles/fill = SubResource("StyleBoxFlat_qfkhn")
 step = 0.1

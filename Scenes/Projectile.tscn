@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ds5jp7wajgepg" path="res://sword.png" id="2_y0kec"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_123p1"]
-size = Vector2(26, 123)
+size = Vector2(11, 46)
 
 [node name="Projectile" type="Area2D"]
 collision_layer = 0
@@ -12,11 +12,11 @@ collision_mask = 0
 script = ExtResource("1_k1cl8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-2, 2.5)
+position = Vector2(-0.5, 0)
 shape = SubResource("RectangleShape2D_123p1")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_y0kec")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

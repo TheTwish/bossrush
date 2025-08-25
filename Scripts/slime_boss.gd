@@ -16,7 +16,7 @@ func basic_attack():
 		p.global_position = global_position
 		p.direction = (player.global_position - global_position).normalized()
 		get_parent().add_child(p)
-		await get_tree().create_timer(0.2).timeout  # 0.1 second between each bullet
+		await get_tree().create_timer(0.5).timeout  # 0.5 second between each bullet
 
 
 func radial_attack():
@@ -30,12 +30,22 @@ func radial_attack():
 		get_parent().add_child(p)
 
 func _on_attack_timer_timeout():
-	var attack : Callable
-	if attack_patterns.size() > 0:
-		if phase == 1:
-			attack = attack_patterns[0]
-		elif phase == 2:
-			attack = attack_patterns[1]
-		else:
-			attack = attack_patterns[randi() % attack_patterns.size()]
-		attack.call()
+	if attack_patterns.size() == 0:
+		return
+
+	var attack: Callable
+	if phase == 1:
+		attack = attack_patterns[0]
+	elif phase == 2:
+		attack = attack_patterns[1]
+	else:
+		attack = attack_patterns[randi() % attack_patterns.size()]
+
+	# Stop timer so it doesn't fire again while attack runs
+	attack_timer.stop()
+
+	# Call the attack as a coroutine so we can await it
+	await attack.call()
+
+	# Restart timer after attack finishes
+	attack_timer.start()
