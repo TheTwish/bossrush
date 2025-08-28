@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://b4w7fgwaavllh"]
+
+[ext_resource type="PackedScene" uid="uid://bmycmcnum767h" path="res://Scenes/BossBase.tscn" id="1_dm1yt"]
+[ext_resource type="Script" uid="uid://bbagmtupmuhtm" path="res://Scripts/flying_boss.gd" id="2_dm1yt"]
+[ext_resource type="Texture2D" uid="uid://vatoakcuynhb" path="res://icon.svg" id="3_00l4h"]
+
+[node name="FlyingBoss" instance=ExtResource("1_dm1yt")]
+script = ExtResource("2_dm1yt")
+speed = 150.0
+dash_speed = 600.0
+circle_radius = 400.0
+dash_cooldown = 2.0
+dash_duration = 1.0
+projectile_scene = null
+
+[node name="Sprite2D" parent="." index="2"]
+position = Vector2(11, 3.50001)
+scale = Vector2(4.48438, 3.89844)
+texture = ExtResource("3_00l4h")

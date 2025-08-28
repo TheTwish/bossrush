@@ -1,51 +1,115 @@
 extends BossBase
 
-func _ready():
-	attack_timer.wait_time = 2.0
-	# Define attack patterns for this boss
-	attack_patterns = [basic_attack, radial_attack]
-	super._ready() # important, calls BossBase setup
+# Movement
+@export var hop_speed: float = 300        # horizontal hop speed
+@export var hop_height: float = 600       # initial vertical velocity
+@export var hop_interval: float = 1.5     # time between hops
+@export var gravity: float = 800
+@export var drop_through_layer: int = 6   # Layer for drop-through platforms
 
-func basic_attack():
-	if not player: return
-	for i in range(5):
-		var p = projectile_scene.instantiate()
-		p.faction = "enemy"
-		p.collision_layer = 1 << 3    # Enemy Projectile (layer 4)
-		p.collision_mask = 1 << 0   # Collides with Layer 1 (player)
-		p.global_position = global_position
-		p.direction = (player.global_position - global_position).normalized()
-		get_parent().add_child(p)
-		await get_tree().create_timer(0.5).timeout  # 0.5 second between each bullet
+var hop_timer: float = 0.0
+var is_hopping: bool = false
+var hop_velocity: Vector2 = Vector2.ZERO
+var dropping_through: bool = false
 
+func _ready() -> void:
+	super._ready()
+	hop_timer = hop_interval
+	# Ensure drop-through layer collisions are enabled initially
+	set_collision_mask_value(drop_through_layer, true)
 
-func radial_attack():
-	for angle in range(0, 360, 30):
-		var p = projectile_scene.instantiate()
-		p.faction = "enemy"
-		p.collision_layer = 1 << 3    # Enemy Projectile (layer 4)
-		p.collision_mask = 1 << 0   # Collides with Layer 1 (player)
-		p.global_position = global_position
-		p.direction = Vector2.RIGHT.rotated(deg_to_rad(angle))
-		get_parent().add_child(p)
-
-func _on_attack_timer_timeout():
-	if attack_patterns.size() == 0:
+func _physics_process(delta: float) -> void:
+	if not player:
 		return
 
-	var attack: Callable
-	if phase == 1:
-		attack = attack_patterns[0]
-	elif phase == 2:
-		attack = attack_patterns[1]
+	# --- Hop cooldown ---
+	hop_timer -= delta
+	if hop_timer <= 0 and not is_hopping:
+		_start_hop()
+
+	# --- Platform collision logic ---
+	var player_below = player.global_position.y > global_position.y+150
+
+	if is_hopping:
+		if hop_velocity.y < 0:
+			# Boss is moving up → ignore platforms
+			set_collision_mask_value(drop_through_layer, false)
+		elif player_below and _needs_to_drop_through():
+			# Boss falling and player is below → drop through
+			set_collision_mask_value(drop_through_layer, false)
+			dropping_through = true
+		else:
+			# Boss falling, player not below → collide normally
+			set_collision_mask_value(drop_through_layer, true)
+			dropping_through = false
 	else:
-		attack = attack_patterns[randi() % attack_patterns.size()]
+		# Not hopping → collide normally
+		set_collision_mask_value(drop_through_layer, true)
+		dropping_through = false
 
-	# Stop timer so it doesn't fire again while attack runs
-	attack_timer.stop()
+	# --- Apply gravity ---
+	if not is_on_floor() or dropping_through:
+		hop_velocity.y += gravity * delta
+		hop_velocity.y = min(hop_velocity.y, gravity * 2)  # clamp fall speed
 
-	# Call the attack as a coroutine so we can await it
-	await attack.call()
+	# --- Move the boss ---
+	velocity = hop_velocity
+	move_and_slide()
 
-	# Restart timer after attack finishes
-	attack_timer.start()
+	# --- Reset hop when landing ---
+	if is_on_floor() and is_hopping:
+		is_hopping = false
+		hop_timer = hop_interval
+		hop_velocity = Vector2.ZERO
+		dropping_through = false
+
+
+func _start_hop() -> void:
+	is_hopping = true
+	hop_timer = hop_interval
+	var dir = (player.global_position - global_position).normalized()
+	var random_factor = randf_range(0.3, 1.0)  # ±15% variation
+	hop_velocity.x = dir.x * hop_speed * random_factor  # horizontal speed
+	hop_velocity.y = -hop_height        # vertical speed
+
+func _needs_to_drop_through() -> bool:
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsRayQueryParameters2D.new()
+	query.from = global_position
+	query.to = global_position + Vector2(0, 20)
+	query.exclude = [self]
+	query.collision_mask = 1 << (drop_through_layer - 1)
+	return space_state.intersect_ray(query) != null
+
+func _is_platform_below() -> bool:
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsRayQueryParameters2D.new()
+	query.from = global_position
+	query.to = global_position + Vector2(0, 10)  # short ray
+	query.exclude = [self]
+	query.collision_mask = 1 << (drop_through_layer - 1)
+	return space_state.intersect_ray(query) != null
+
+func _drop_through_platform() -> void:
+	dropping_through = true
+	set_collision_mask_value(drop_through_layer, false)
+
+func _restore_platform_collision() -> void:
+	set_collision_mask_value(drop_through_layer, true)
+	dropping_through = false
+
+func _on_hitbox_body_entered(body: Node2D) -> void:
+	if body.is_in_group("player") and body.has_method("take_damage"):
+		body.take_damage(10)
+
+func take_damage(amount: int) -> void:
+	super.take_damage(amount)
+	if health <= max_health / 2 and phase == 1:
+		_enter_phase2()
+
+func _enter_phase2() -> void:
+	phase = 2
+	hop_speed *= 1.5
+	hop_height *= 1.2
+	hop_interval *= 0.7
+	print("King Slime Phase 2!")

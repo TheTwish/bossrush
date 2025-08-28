@@ -13,8 +13,7 @@ var player: Node2D
 @onready var attack_timer: Timer = $AttackTimer
 @onready var bar: ProgressBar = get_tree().root.get_node("BossArena/UI/BossHealthBar")
 
-func _ready():
-	
+func _ready() -> void:
 	health = max_health
 	bar.max_value = max_health
 	bar.value = health
@@ -22,23 +21,24 @@ func _ready():
 	attack_timer.timeout.connect(_on_attack_timer_timeout)
 	attack_timer.start()
 
-func _process(delta):
-	if player and player.is_inside_tree():
-		global_position = global_position.move_toward(player.global_position, move_speed * delta)
-
-func _on_attack_timer_timeout():
+func _on_attack_timer_timeout() -> void:
 	if attack_patterns.size() > 0:
 		# Call one of the attacks (random or sequential)
 		var attack = attack_patterns[randi() % attack_patterns.size()]
 		attack.call()
 
-func take_damage(amount: int):
+func take_damage(amount: int) -> void:
 	health -= amount
 	bar.value = health
-	if health <= max_health / 2 and phase == 1:
-		phase = 2
+	# Flash red briefly
+	modulate = Color(1, 0.3, 0.3)
+	get_tree().create_timer(0.2).timeout.connect(func(): modulate = Color(1, 1, 1))
 	if health <= 0:
 		die()
 
-func die():
+func die() -> void:
 	queue_free()
+
+
+func _on_hitbox_body_entered(_body: Node2D) -> void:
+	pass # Replace with function body.

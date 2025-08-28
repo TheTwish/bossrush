@@ -14,6 +14,13 @@ script = ExtResource("1_v8ofo")
 projectile_scene = ExtResource("2_y7rqw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(18, 3)
+shape = SubResource("RectangleShape2D_v8ofo")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
 position = Vector2(9, 1.5)
 shape = SubResource("RectangleShape2D_v8ofo")
 
@@ -21,3 +28,5 @@ shape = SubResource("RectangleShape2D_v8ofo")
 texture = ExtResource("1_dyjx7")
 
 [node name="AttackTimer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
