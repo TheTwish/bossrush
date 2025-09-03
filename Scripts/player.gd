@@ -4,6 +4,22 @@ extends CharacterBody2D
 @onready var weapon_holder: Node2D = $Visuals/WeaponHolder
 @onready var bar: ProgressBar = get_tree().root.get_node("BossArena/UI/PlayerHealthBar")
 
+# --- Inv system ---
+var inventory: Array[Item] = []
+var max_slots: int = 40
+var equipment := {
+	"helmet": null,
+	"body": null,
+	"legs": null,
+	"accessory1": null,
+	"accessory2": null,
+	"accessory3": null,
+	"accessory4": null,
+	"accessory5": null,
+	"weapon": null
+}
+@onready var inventory_ui = get_tree().root.get_node("BossArena/UI/InventoryUI")
+
 # --- Movement and Visuals ---
 @export var base_speed: float = 200
 @export var base_jump_force: float = 600
@@ -147,6 +163,11 @@ func _physics_process(delta: float) -> void:
 			sword.damage_mult = stats["damage_mult"] # modifier to sword damage from stats
 			sword.swing()
 
+	if Input.is_action_just_pressed("inventory"):
+		inventory.append(load("res://Items/Sword.tres"))
+		update_inventory_ui()
+		inventory_ui.visible = not inventory_ui.visible
+
 func shoot():
 	can_shoot = false
 	var mouse_pos = get_global_mouse_position()
@@ -184,3 +205,11 @@ func die():
 	global_position = Vector2(100, 100)
 	health = max_health
 	bar.value = health
+
+func update_inventory_ui():
+	for i in range(inventory_ui.slots.size()):
+		if i < inventory.size():
+			inventory_ui.slots[i].set_item(inventory[i])
+			print(inventory[i].name)
+		else:
+			inventory_ui.slots[i].set_item(null)

@@ -1,5 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://kvgke3yht4hl"]
+[gd_scene load_steps=9 format=3 uid="uid://kvgke3yht4hl"]
 
+[ext_resource type="PackedScene" uid="uid://du0vwbm8t2jb1" path="res://Scenes/InventoryUI.tscn" id="2_0lumg"]
 [ext_resource type="PackedScene" uid="uid://b4w7fgwaavllh" path="res://Scenes/FlyingBoss.tscn" id="2_prly3"]
 [ext_resource type="PackedScene" uid="uid://mmbvej4b6kma" path="res://Scenes/Player.tscn" id="3_0lumg"]
 [ext_resource type="PackedScene" uid="uid://b5s5v7mc1n46r" path="res://Scenes/Projectile.tscn" id="3_qfkhn"]
@@ -106,6 +107,9 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_qfkhn")
 step = 0.1
 value = 50.0
 show_percentage = false
+
+[node name="InventoryUI" parent="UI" instance=ExtResource("2_0lumg")]
+visible = false
 
 [node name="FlyingBoss" parent="." instance=ExtResource("2_prly3")]
 position = Vector2(972, 293)

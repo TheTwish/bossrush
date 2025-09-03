@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://by3xofqwhks00"]
+
+[ext_resource type="Script" uid="uid://br4inrn7q2hoc" path="res://Scenes/inventory_slot.gd" id="1_ia5d8"]
+[ext_resource type="Texture2D" uid="uid://b55ryqpcnuvku" path="res://MenuTemplateWoodThinBorder.png" id="2_aw7i0"]
+
+[node name="InventorySlot" type="Control"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ia5d8")
+empty_texture = ExtResource("2_aw7i0")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 25.0
+offset_right = 60.0
+offset_bottom = 75.0
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 25.0
+offset_right = 60.0
+offset_bottom = 75.0
+expand_mode = 3
+stretch_mode = 5
