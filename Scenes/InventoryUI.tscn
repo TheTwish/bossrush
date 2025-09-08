@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://du0vwbm8t2jb1"]
+[gd_scene load_steps=3 format=3 uid="uid://du0vwbm8t2jb1"]
 
-[ext_resource type="Script" uid="uid://bbcrt16joxn7h" path="res://Scenes/inventory_ui.gd" id="1_lm8dl"]
-[ext_resource type="PackedScene" uid="uid://by3xofqwhks00" path="res://Scenes/InventorySlot.tscn" id="2_2xnty"]
+[ext_resource type="Script" uid="uid://bbcrt16joxn7h" path="res://Scripts/inventory_ui.gd" id="1_lm8dl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2xnty"]
 bg_color = Color(0.244776, 0.244776, 0.244776, 0.588235)
@@ -15,7 +14,6 @@ offset_right = 640.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lm8dl")
-slot_scene = ExtResource("2_2xnty")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -37,3 +35,17 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_2xnty")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel2"]
 layout_mode = 0
+
+[node name="Stats" type="Label" parent="."]
+layout_mode = 0
+offset_top = 417.0
+offset_right = 72.0
+offset_bottom = 622.0
+text = "TESTTEST
+TESTTEST
+TESTTEST
+TESTTEST
+TESTTEST
+TESTTEST
+TESTTEST
+"

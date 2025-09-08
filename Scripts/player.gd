@@ -8,17 +8,18 @@ extends CharacterBody2D
 var inventory: Array[Item] = []
 var max_slots: int = 40
 var equipment := {
+	"weapon": null,
 	"helmet": null,
 	"body": null,
 	"legs": null,
 	"accessory1": null,
 	"accessory2": null,
 	"accessory3": null,
-	"accessory4": null,
-	"accessory5": null,
-	"weapon": null
+	"accessory4": null
 }
 @onready var inventory_ui = get_tree().root.get_node("BossArena/UI/InventoryUI")
+var inventory_visible: bool = false
+@onready var stats_label: Label = get_tree().root.get_node("BossArena/UI/InventoryUI/Stats")
 
 # --- Movement and Visuals ---
 @export var base_speed: float = 200
@@ -83,6 +84,10 @@ func _ready():
 	add_child(regen_timer)
 	regen_timer.connect("timeout", Callable(self, "_on_regen_tick"))
 	regen_timer.start()
+	
+	for slot in inventory_ui.slots:
+		slot.item_equipped.connect(_on_item_equipped)
+		slot.item_unequipped.connect(_on_item_unequipped)
 
 func _on_regen_tick() -> void:
 	if health < max_health:
@@ -152,7 +157,17 @@ func _physics_process(delta: float) -> void:
 
 	# --- Move player ---
 	move_and_slide()
-
+	
+	if Input.is_action_just_pressed("inventory"):
+		inventory.append(load("res://Items/Sword.tres"))
+		inventory.append(load("res://Items/Helmet.tres"))
+		update_inventory_ui()
+		inventory_ui.visible = not inventory_ui.visible
+		inventory_visible = inventory_ui.visible
+	
+	# --- Return in inventory visible, continue if not ---
+	if inventory_visible:
+		return
 	# --- Shooting ---
 	if Input.is_action_just_pressed("shoot") and can_shoot:
 		shoot()
@@ -162,11 +177,6 @@ func _physics_process(delta: float) -> void:
 		if sword:
 			sword.damage_mult = stats["damage_mult"] # modifier to sword damage from stats
 			sword.swing()
-
-	if Input.is_action_just_pressed("inventory"):
-		inventory.append(load("res://Items/Sword.tres"))
-		update_inventory_ui()
-		inventory_ui.visible = not inventory_ui.visible
 
 func shoot():
 	can_shoot = false
@@ -207,9 +217,35 @@ func die():
 	bar.value = health
 
 func update_inventory_ui():
-	for i in range(inventory_ui.slots.size()):
-		if i < inventory.size():
-			inventory_ui.slots[i].set_item(inventory[i])
-			print(inventory[i].name)
-		else:
-			inventory_ui.slots[i].set_item(null)
+	inventory_ui.update_inventory(inventory)
+	inventory_ui.update_equipment(equipment)
+	update_stats_display()
+
+func _on_item_equipped(item: Item, slot: Control):
+	# Update equipment dictionary
+	equipment[slot.slot_type] = item
+	print("Signal received! Equipped:", item.name)
+	# Apply stats
+	for stat in item.stats.keys():
+		if stats.has(stat):
+			stats[stat] += item.stats[stat]
+			print("Equipped:", item.name, "->", stat, "+", item.stats[stat], "New:", stats[stat])
+	update_stats_display()
+
+
+func _on_item_unequipped(item: Item, slot: Control):
+	# Remove from equipment dictionary
+	equipment[slot.slot_type] = null
+	# Remove stats
+	for stat in item.stats.keys():
+		if stats.has(stat):
+			stats[stat] -= item.stats[stat]
+			print("Unequipped:", item.name, "->", stat, "-", item.stats[stat], "New:", stats[stat])
+	update_stats_display()
+			
+			
+func update_stats_display():
+	var text = "Stats:\n"
+	for stat in stats.keys():
+		text += stat.capitalize() + ": " + str(stats[stat]) + "\n"
+	stats_label.text = text

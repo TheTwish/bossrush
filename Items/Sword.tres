@@ -5,9 +5,10 @@
 
 [resource]
 script = ExtResource("1_jm3gf")
-id = "1"
 name = "Sword"
 icon = ExtResource("1_5nuw4")
-type = "Weapon"
-stats = {}
+type = "weapon"
+stats = Dictionary[String, float]({
+"damage_mult": 0.1
+})
 metadata/_custom_type_script = "uid://dcsh7nka8ilt1"

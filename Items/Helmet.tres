@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://bwgusuickm7dg"]
+
+[ext_resource type="Texture2D" uid="uid://c0nv8om18hgpx" path="res://warrior.png" id="1_ump4u"]
+[ext_resource type="Script" uid="uid://dcsh7nka8ilt1" path="res://Scripts/item.gd" id="2_btljj"]
+
+[resource]
+script = ExtResource("2_btljj")
+name = "Helmet"
+icon = ExtResource("1_ump4u")
+type = "helmet"
+stats = Dictionary[String, float]({
+"speed": 3.0
+})
+metadata/_custom_type_script = "uid://dcsh7nka8ilt1"

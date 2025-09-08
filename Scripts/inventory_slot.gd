@@ -7,19 +7,34 @@ extends Control
 @export var slot_type: String = "any"  # "any", "helmet", "body", "legs", "accessory", etc.
 var item: Item = null
 
+signal item_equipped(item: Item, slot: Control)
+signal item_unequipped(item: Item, slot: Control)
+
+
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	bg.texture = empty_texture
 	icon.visible = false
 
 func set_item(new_item: Item):
+	# Only care about equip/unequip if this is an equipment slot
+	var is_equipment_slot = slot_type != "any"
+
+	# Unequip if something was here
+	if item and is_equipment_slot:
+		emit_signal("item_unequipped", item, self)
+
 	item = new_item
+
 	if item:
 		icon.texture = item.icon
 		icon.visible = true
+		if is_equipment_slot:
+			emit_signal("item_equipped", item, self)
 	else:
 		icon.visible = false
 		icon.texture = null
+
 	bg.texture = empty_texture
 
 func _get_drag_data(_pos):
@@ -51,12 +66,28 @@ func _drop_data(_pos, data):
 	var new_item = data["item"]
 	var source_slot: Control = data["source"]
 
-	# Swap items
+	# If this slot can't accept the new item, snap it back to the source
+	if not can_accept(new_item):
+		source_slot.set_item(new_item) # restore original
+		return
+
+	# Store the current item here (could be null)
 	var temp = item
+
+	# Move dragged item into this slot
 	set_item(new_item)
 
-	# Put old item back in original slot
-	source_slot.set_item(temp)
+	# Clear the source slot (the dragged item has officially moved)
+	source_slot.set_item(null)
+
+	# If there was something already here, try to return it to the source slot
+	if temp:
+		if source_slot.can_accept(temp):
+			source_slot.set_item(temp) # valid swap
+		else:
+			# Snap back: return dragged item and cancel swap
+			set_item(temp)
+			source_slot.set_item(new_item)
 
 func can_accept(newitem: Item) -> bool:
 	if slot_type == "any":
