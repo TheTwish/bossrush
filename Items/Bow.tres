@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Item" load_steps=4 format=3 uid="uid://climv71uijwnw"]
+
+[ext_resource type="Texture2D" uid="uid://cb3ksm622bsb1" path="res://slimetest.png" id="1_x61mr"]
+[ext_resource type="Script" uid="uid://dcsh7nka8ilt1" path="res://Scripts/item.gd" id="2_8lkr0"]
+[ext_resource type="PackedScene" uid="uid://cxswgrxm4lle5" path="res://Scenes/Weapons/Bow.tscn" id="3_x61mr"]
+
+[resource]
+script = ExtResource("2_8lkr0")
+name = "Bow"
+icon = ExtResource("1_x61mr")
+type = "weapon"
+stats = Dictionary[String, float]({
+"damage_mult": 0.1
+})
+weapon_kind = "ranged"
+weapon_scene = ExtResource("3_x61mr")
+metadata/_custom_type_script = "uid://dcsh7nka8ilt1"

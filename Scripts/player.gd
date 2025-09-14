@@ -34,10 +34,9 @@ var inventory_visible: bool = false
 @export var fall_gravity_multiplier: float = 1.6
 
 # --- Combat ---
-@export var projectile_scene: PackedScene
-@export var shoot_cooldown: float = 0.2
-var can_shoot: bool = true
-@onready var sword = weapon_holder.get_child(0)
+var current_weapon_item: Item = null  # the Item resource for the equipped weapon
+var current_weapon: Node = null       # the instantiated weapon scene (visual/logic)
+var can_attack: bool = true
 
 # --- iFrames ---
 @export var iframes_duration: float = 0.5
@@ -95,12 +94,6 @@ func _on_regen_tick() -> void:
 		bar.value = health
 
 func _physics_process(delta: float) -> void:
-	# --- Facing based on mouse ---
-	if !sword.swinging:
-		var mouse_pos = get_global_mouse_position()
-		facing = 1 if mouse_pos.x >= global_position.x else -1
-		visuals.scale.x = facing
-
 	# --- i-frames ---
 	if iframes_timer > 0:
 		iframes_timer -= delta
@@ -161,40 +154,25 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("inventory"):
 		inventory.append(load("res://Items/Sword.tres"))
 		inventory.append(load("res://Items/Helmet.tres"))
+		inventory.append(load("res://Items/Bow.tres"))
 		update_inventory_ui()
 		inventory_ui.visible = not inventory_ui.visible
 		inventory_visible = inventory_ui.visible
 	
-	# --- Return in inventory visible, continue if not ---
-	if inventory_visible:
+	# --- Return in inventory visible or cannot attack, continue if not ---
+	if !can_attack or inventory_visible:
 		return
-	# --- Shooting ---
-	if Input.is_action_just_pressed("shoot") and can_shoot:
-		shoot()
 
-	# --- Melee ---
-	if Input.is_action_just_pressed("melee"):
-		if sword:
-			sword.damage_mult = stats["damage_mult"] # modifier to sword damage from stats
-			sword.swing()
+	# --- Melee / Ranged attacks---
+	if Input.is_action_just_pressed("attack") and current_weapon_item and current_weapon:
+		match current_weapon_item.weapon_kind:
+			"melee":
+				if current_weapon.has_method("swing"):
+					current_weapon.swing(self)
+			"ranged":
+				if current_weapon.has_method("shoot"):
+					current_weapon.shoot(global_position, get_global_mouse_position(), self)
 
-func shoot():
-	can_shoot = false
-	var mouse_pos = get_global_mouse_position()
-	var direction = (mouse_pos - global_position).normalized()
-
-	var p = projectile_scene.instantiate()
-	p.faction = "player"
-	p.collision_layer = 1 << 2
-	p.collision_mask = 1 << 1
-	p.spectral = true
-	p.global_position = global_position
-	p.direction = direction
-	p.rotation = direction.angle()
-	get_parent().add_child(p)
-
-	await get_tree().create_timer(shoot_cooldown).timeout
-	can_shoot = true
 
 func take_damage(amount: int):
 	if iframes_timer > 0:
@@ -222,30 +200,52 @@ func update_inventory_ui():
 	update_stats_display()
 
 func _on_item_equipped(item: Item, slot: Control):
-	# Update equipment dictionary
 	equipment[slot.slot_type] = item
-	print("Signal received! Equipped:", item.name)
+	print("Equipped:", item.name)
+
 	# Apply stats
 	for stat in item.stats.keys():
 		if stats.has(stat):
 			stats[stat] += item.stats[stat]
-			print("Equipped:", item.name, "->", stat, "+", item.stats[stat], "New:", stats[stat])
+
+	# Special handling for weapon
+	if slot.slot_type == "weapon":
+		_set_current_weapon(item)
+
 	update_stats_display()
 
-
 func _on_item_unequipped(item: Item, slot: Control):
-	# Remove from equipment dictionary
 	equipment[slot.slot_type] = null
-	# Remove stats
+
 	for stat in item.stats.keys():
 		if stats.has(stat):
 			stats[stat] -= item.stats[stat]
-			print("Unequipped:", item.name, "->", stat, "-", item.stats[stat], "New:", stats[stat])
+
+	if slot.slot_type == "weapon":
+		_set_current_weapon(null)
+
 	update_stats_display()
-			
-			
+
 func update_stats_display():
 	var text = "Stats:\n"
 	for stat in stats.keys():
 		text += stat.capitalize() + ": " + str(stats[stat]) + "\n"
 	stats_label.text = text
+
+func _set_current_weapon(item: Item) -> void:
+	# Remove old
+	if current_weapon:
+		current_weapon.queue_free()
+		current_weapon = null
+		current_weapon_item = null
+
+	# Instantiate new weapon scene (visual/behaviour) and remember item
+	if item and item.weapon_scene:
+		current_weapon = item.weapon_scene.instantiate()
+		weapon_holder.add_child(current_weapon)
+		# reset transform so it sits in the holder predictably
+		current_weapon.position = Vector2.ZERO
+		current_weapon.rotation = 0.0
+		current_weapon.scale = Vector2(1, 1)
+		current_weapon_item = item
+		print("Weapon equipped:", item.name)

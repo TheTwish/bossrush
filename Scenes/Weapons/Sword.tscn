@@ -1,19 +1,19 @@
 [gd_scene load_steps=4 format=3 uid="uid://ddjc5ms41jiuc"]
 
-[ext_resource type="Script" uid="uid://dv27vy8kaea5g" path="res://Scripts/sword.gd" id="1_223a5"]
-[ext_resource type="Texture2D" uid="uid://ds5jp7wajgepg" path="res://sword.png" id="1_suca6"]
+[ext_resource type="Script" uid="uid://dv27vy8kaea5g" path="res://Scripts/Weapons/sword.gd" id="1_l8vww"]
+[ext_resource type="Texture2D" uid="uid://ds5jp7wajgepg" path="res://sword.png" id="2_6nwni"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_suca6"]
 size = Vector2(112, 547)
 
 [node name="Sword" type="Node2D"]
-script = ExtResource("1_223a5")
-sword_texture = ExtResource("1_suca6")
+script = ExtResource("1_l8vww")
+sword_texture = ExtResource("2_6nwni")
 
 [node name="Pivot" type="Node2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="Pivot"]
-texture = ExtResource("1_suca6")
+texture = ExtResource("2_6nwni")
 offset = Vector2(5, -280)
 
 [node name="Area2D" type="Area2D" parent="Pivot/Sprite2D"]

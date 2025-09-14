@@ -9,6 +9,8 @@ name = "Helmet"
 icon = ExtResource("1_ump4u")
 type = "helmet"
 stats = Dictionary[String, float]({
+"damage_mult": 1.0,
 "speed": 3.0
 })
+weapon_kind = "none"
 metadata/_custom_type_script = "uid://dcsh7nka8ilt1"

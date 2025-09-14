@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cxswgrxm4lle5"]
+
+[ext_resource type="Script" uid="uid://2hypfutue5hj" path="res://Scripts/Weapons/bow.gd" id="1_www5h"]
+[ext_resource type="PackedScene" uid="uid://b5s5v7mc1n46r" path="res://Scenes/Projectile.tscn" id="2_g3ovx"]
+[ext_resource type="Texture2D" uid="uid://ds5jp7wajgepg" path="res://sword.png" id="3_ni888"]
+
+[node name="Sword" type="Node2D"]
+script = ExtResource("1_www5h")
+projectile_scene = ExtResource("2_g3ovx")
+
+[node name="Pivot" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Pivot"]
+rotation = 1.0102
+texture = ExtResource("3_ni888")
+offset = Vector2(5, -280)

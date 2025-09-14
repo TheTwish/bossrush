@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var damage: int = 20
-var damage_mult: float = 1.0
+var final_damage: int
 @export var swing_speed: float = 1    # how long the swing takes
 @export var swing_angle: float = 180  # arc degrees
 @export var sword_texture: Texture2D
@@ -9,6 +9,7 @@ var damage_mult: float = 1.0
 @onready var pivot: Node2D = $Pivot
 @onready var sprite: Sprite2D = $Pivot/Sprite2D
 @onready var hitbox: Area2D = $Pivot/Sprite2D/Area2D
+
 
 
 var swinging: bool = false
@@ -21,7 +22,8 @@ func _ready() -> void:
 	# Start at top of swing (top-right if visuals facing right)
 	pivot.rotation_degrees = -swing_angle / 2
 
-func swing() -> void:
+func swing(player: Node) -> void:
+	final_damage = damage * player.stats["damage_mult"]
 	if swinging:
 		return
 	swinging = true
@@ -41,5 +43,5 @@ func _end_swing() -> void:
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body.is_in_group("boss") and body.has_method("take_damage"):
-		body.take_damage(int(damage * damage_mult))
+		body.take_damage(int(final_damage))
 		print("Deal Damage")
