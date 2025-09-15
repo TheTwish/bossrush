@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BossData" load_steps=6 format=3 uid="uid://cpew3835qos3i"]
+
+[ext_resource type="PackedScene" uid="uid://b4w7fgwaavllh" path="res://Scenes/Bosses/FlyingBoss.tscn" id="1_gx6tk"]
+[ext_resource type="Script" uid="uid://dcsh7nka8ilt1" path="res://Scripts/item.gd" id="2_gx6tk"]
+[ext_resource type="Resource" uid="uid://climv71uijwnw" path="res://Items/Bow.tres" id="3_so1vg"]
+[ext_resource type="Script" uid="uid://b3avdnkdgggrj" path="res://Scripts/boss_data.gd" id="4_cf5d3"]
+[ext_resource type="Resource" uid="uid://bgvujkf2w8sc8" path="res://Items/Sword.tres" id="4_f5l1b"]
+
+[resource]
+script = ExtResource("4_cf5d3")
+boss_name = "Flying Boss"
+boss_scene = ExtResource("1_gx6tk")
+unlocked = false
+loot = Array[ExtResource("2_gx6tk")]([ExtResource("3_so1vg"), ExtResource("4_f5l1b")])
+next_bosses = Array[ExtResource("4_cf5d3")]([null])
+metadata/_custom_type_script = "uid://b3avdnkdgggrj"

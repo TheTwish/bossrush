@@ -69,7 +69,7 @@ func take_damage(amount: int) -> void:
 	super.take_damage(amount)
 
 	# Phase 2 transition
-	if health <= max_health / 2 and phase == 1:
+	if health <= max_health / 2.0 and phase == 1:
 		_enter_phase2()
 
 func _enter_phase2() -> void:

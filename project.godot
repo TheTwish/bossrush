@@ -26,6 +26,7 @@ window/size/mode=3
 player=""
 boss=""
 floor=""
+boss_log_ui=""
 
 [input]
 
@@ -64,6 +65,11 @@ inventory={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":73,"key_label":0,"unicode":105,"location":0,"echo":false,"script":null)
 ]
 }
+boss_log={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":66,"key_label":0,"unicode":98,"location":0,"echo":false,"script":null)
+]
+}
 
 [layer_names]
 
@@ -72,3 +78,4 @@ inventory={
 2d_physics/layer_3="PlayerProjectile"
 2d_physics/layer_4="EnemyProjectile"
 2d_physics/layer_5="Floor"
+2d_physics/layer_6="Platforms"

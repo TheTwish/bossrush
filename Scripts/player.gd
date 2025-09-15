@@ -66,10 +66,12 @@ var stats := {
 var regen_timer: Timer
 
 func _ready():
+	add_to_group("player")
+	
 	# Collision masks
-	set_collision_mask_value(5, true)
-	set_collision_mask_value(6, true)
 
+	collision_mask = 1 << 4   # Collides with Layer 5 (Floor)
+	collision_mask = 1 << 5   # Collides with Layer 6 (Platforms)
 	# Set health
 	health = max_health
 	bar.max_value = max_health
@@ -94,85 +96,23 @@ func _on_regen_tick() -> void:
 		bar.value = health
 
 func _physics_process(delta: float) -> void:
-	# --- i-frames ---
-	if iframes_timer > 0:
-		iframes_timer -= delta
-
-	# --- Horizontal movement ---
-	var input_dir = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-	velocity.x = input_dir * base_speed * stats["speed"]
-
-	# --- Coyote time ---
-	if is_on_floor():
-		coyote_timer = coyote_time_duration
-	else:
-		coyote_timer -= delta
-
-	# --- Jump buffer ---
-	if Input.is_action_just_pressed("jump"):
-		jump_buffer_timer = jump_buffer_duration
-	else:
-		jump_buffer_timer -= delta
-
-	# --- Drop-through platforms ---
-	if Input.is_action_pressed("down") and is_on_floor() and not dropping_through:
-		dropping_through = true
-		set_collision_mask_value(6, false)
-		velocity.y = max(velocity.y, 50)
-	elif dropping_through:
-		if not Input.is_action_pressed("down") or not is_on_floor():
-			set_collision_mask_value(6, true)
-			dropping_through = false
-
-	# --- Jumping ---
-	if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
-		velocity.y = -base_jump_force * stats["jump_force"]
-		is_jumping = true
-		jump_buffer_timer = 0.0
-		coyote_timer = 0.0
-
-	# --- Gravity ---
-	if not is_on_floor() or dropping_through:
-		var applied_gravity = gravity
-		if abs(velocity.y) < apex_threshold and velocity.y < 0:
-			applied_gravity *= apex_gravity_multiplier
-		elif velocity.y > 0:
-			applied_gravity *= fall_gravity_multiplier
-
-		velocity.y += applied_gravity * delta
-		velocity.y = min(velocity.y, max_fall_speed)
-
-		if is_jumping and not Input.is_action_pressed("jump") and velocity.y < 0:
-			velocity.y += gravity * (jump_cut_gravity_multiplier - 1) * delta
-
-	if velocity.y > 0:
-		is_jumping = false
-
-	# --- Move player ---
+	_handle_iframes(delta)
+	_handle_movement(delta)
+	_handle_jumping_and_gravity(delta)
 	move_and_slide()
-	
-	if Input.is_action_just_pressed("inventory"):
-		inventory.append(load("res://Items/Sword.tres"))
-		inventory.append(load("res://Items/Helmet.tres"))
-		inventory.append(load("res://Items/Bow.tres"))
-		update_inventory_ui()
-		inventory_ui.visible = not inventory_ui.visible
-		inventory_visible = inventory_ui.visible
-	
-	# --- Return in inventory visible or cannot attack, continue if not ---
-	if !can_attack or inventory_visible:
-		return
 
-	# --- Melee / Ranged attacks---
-	if Input.is_action_just_pressed("attack") and current_weapon_item and current_weapon:
-		match current_weapon_item.weapon_kind:
-			"melee":
-				if current_weapon.has_method("swing"):
-					current_weapon.swing(self)
-			"ranged":
-				if current_weapon.has_method("shoot"):
-					current_weapon.shoot(global_position, get_global_mouse_position(), self)
+func _process(_delta: float) -> void:
+	_face_cursor()
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("inventory"):
+		_toggle_inventory()
+	elif event.is_action_pressed("attack"):
+		_handle_attack()
+	elif event.is_action_pressed("boss_log"):
+		var boss_log = get_tree().get_first_node_in_group("boss_log_ui")
+		if boss_log:
+			boss_log.visible = not boss_log.visible
 
 func take_damage(amount: int):
 	if iframes_timer > 0:
@@ -249,3 +189,83 @@ func _set_current_weapon(item: Item) -> void:
 		current_weapon.scale = Vector2(1, 1)
 		current_weapon_item = item
 		print("Weapon equipped:", item.name)
+
+
+#---Helpers---
+func _handle_iframes(delta: float) -> void:
+	if iframes_timer > 0:
+		iframes_timer -= delta
+
+func _handle_movement(delta: float) -> void:
+	var input_dir = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+	velocity.x = input_dir * base_speed * stats["speed"]
+
+	if is_on_floor():
+		coyote_timer = coyote_time_duration
+	else:
+		coyote_timer -= delta
+
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer_timer = jump_buffer_duration
+	else:
+		jump_buffer_timer -= delta
+
+	if Input.is_action_pressed("down") and is_on_floor() and not dropping_through:
+		dropping_through = true
+		set_collision_mask_value(6, false)
+		velocity.y = max(velocity.y, 50)
+	elif dropping_through:
+		if not Input.is_action_pressed("down") or not is_on_floor():
+			set_collision_mask_value(6, true)
+			dropping_through = false
+
+func _handle_jumping_and_gravity(delta: float) -> void:
+	if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
+		velocity.y = -base_jump_force * stats["jump_force"]
+		is_jumping = true
+		jump_buffer_timer = 0.0
+		coyote_timer = 0.0
+
+	if not is_on_floor() or dropping_through:
+		var applied_gravity = gravity
+		if abs(velocity.y) < apex_threshold and velocity.y < 0:
+			applied_gravity *= apex_gravity_multiplier
+		elif velocity.y > 0:
+			applied_gravity *= fall_gravity_multiplier
+
+		velocity.y += applied_gravity * delta
+		velocity.y = min(velocity.y, max_fall_speed)
+
+		if is_jumping and not Input.is_action_pressed("jump") and velocity.y < 0:
+			velocity.y += gravity * (jump_cut_gravity_multiplier - 1) * delta
+
+	if velocity.y > 0:
+		is_jumping = false
+
+func _face_cursor() -> void:
+	var mouse_pos = get_global_mouse_position()
+	var dir = (mouse_pos - global_position).normalized()
+	if dir.x != 0:
+		facing = sign(dir.x)
+		visuals.scale.x = facing
+
+func _toggle_inventory() -> void:
+	inventory.append(load("res://Items/Sword.tres"))
+	inventory.append(load("res://Items/Helmet.tres"))
+	inventory.append(load("res://Items/Bow.tres"))
+	update_inventory_ui()
+	inventory_ui.visible = not inventory_ui.visible
+	inventory_visible = inventory_ui.visible
+
+func _handle_attack() -> void:
+	if !can_attack or inventory_visible:
+		return
+
+	if current_weapon_item and current_weapon:
+		match current_weapon_item.weapon_kind:
+			"melee":
+				if current_weapon.has_method("swing"):
+					current_weapon.swing(self)
+			"ranged":
+				if current_weapon.has_method("shoot"):
+					current_weapon.shoot(global_position, get_global_mouse_position(), self)

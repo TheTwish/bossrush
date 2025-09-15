@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://bmycmcnum767h"]
 
-[ext_resource type="Texture2D" uid="uid://cb3ksm622bsb1" path="res://slimetest.png" id="1_dyjx7"]
-[ext_resource type="Script" uid="uid://b1wx28138ogf2" path="res://Scripts/bossbase.gd" id="1_v8ofo"]
-[ext_resource type="PackedScene" uid="uid://b5s5v7mc1n46r" path="res://Scenes/Projectile.tscn" id="2_y7rqw"]
+[ext_resource type="Script" uid="uid://b1wx28138ogf2" path="res://Scripts/bossbase.gd" id="1_s0a76"]
+[ext_resource type="PackedScene" uid="uid://b5s5v7mc1n46r" path="res://Scenes/Projectile.tscn" id="2_vn0wo"]
+[ext_resource type="Texture2D" uid="uid://cb3ksm622bsb1" path="res://slimetest.png" id="3_hbdlg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v8ofo"]
 size = Vector2(572, 497)
@@ -10,8 +10,8 @@ size = Vector2(572, 497)
 [node name="BossBase" type="CharacterBody2D" groups=["boss"]]
 collision_layer = 2
 collision_mask = 0
-script = ExtResource("1_v8ofo")
-projectile_scene = ExtResource("2_y7rqw")
+script = ExtResource("1_s0a76")
+projectile_scene = ExtResource("2_vn0wo")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(18, 3)
@@ -25,7 +25,7 @@ position = Vector2(9, 1.5)
 shape = SubResource("RectangleShape2D_v8ofo")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_dyjx7")
+texture = ExtResource("3_hbdlg")
 
 [node name="AttackTimer" type="Timer" parent="."]
 

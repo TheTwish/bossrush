@@ -1,10 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://kvgke3yht4hl"]
+[gd_scene load_steps=7 format=3 uid="uid://kvgke3yht4hl"]
 
 [ext_resource type="PackedScene" uid="uid://du0vwbm8t2jb1" path="res://Scenes/InventoryUI.tscn" id="2_0lumg"]
-[ext_resource type="PackedScene" uid="uid://b4w7fgwaavllh" path="res://Scenes/FlyingBoss.tscn" id="2_prly3"]
 [ext_resource type="PackedScene" uid="uid://mmbvej4b6kma" path="res://Scenes/Player.tscn" id="3_0lumg"]
-[ext_resource type="PackedScene" uid="uid://b5s5v7mc1n46r" path="res://Scenes/Projectile.tscn" id="3_qfkhn"]
-[ext_resource type="PackedScene" uid="uid://c6ma4klhbtq2d" path="res://Scenes/SlimeBoss.tscn" id="4_bd3mb"]
+[ext_resource type="PackedScene" uid="uid://d2ng36evai4tj" path="res://Scenes/boss_log.tscn" id="3_qfkhn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ycwjk"]
 size = Vector2(1025, 20)
@@ -91,7 +89,6 @@ grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_prly3")
 theme_override_styles/fill = SubResource("StyleBoxFlat_qfkhn")
 step = 0.1
-value = 50.0
 show_percentage = false
 
 [node name="PlayerHealthBar" type="ProgressBar" parent="UI"]
@@ -111,12 +108,4 @@ show_percentage = false
 [node name="InventoryUI" parent="UI" instance=ExtResource("2_0lumg")]
 visible = false
 
-[node name="FlyingBoss" parent="." instance=ExtResource("2_prly3")]
-position = Vector2(972, 293)
-scale = Vector2(0.236545, 0.236545)
-projectile_scene = ExtResource("3_qfkhn")
-
-[node name="SlimeBoss" parent="." instance=ExtResource("4_bd3mb")]
-position = Vector2(230, 288)
-scale = Vector2(0.441845, 0.441845)
-collision_mask = 48
+[node name="BossLog" parent="UI" instance=ExtResource("3_qfkhn")]

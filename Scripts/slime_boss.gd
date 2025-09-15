@@ -104,7 +104,7 @@ func _on_hitbox_body_entered(body: Node2D) -> void:
 
 func take_damage(amount: int) -> void:
 	super.take_damage(amount)
-	if health <= max_health / 2 and phase == 1:
+	if health <= max_health / 2.0 and phase == 1:
 		_enter_phase2()
 
 func _enter_phase2() -> void:

@@ -1,9 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://c6ma4klhbtq2d"]
 
-[ext_resource type="PackedScene" uid="uid://bmycmcnum767h" path="res://Scenes/BossBase.tscn" id="1_psag7"]
+[ext_resource type="PackedScene" uid="uid://bmycmcnum767h" path="res://Scenes/Bosses/BossBase.tscn" id="1_psag7"]
 [ext_resource type="Script" uid="uid://c05xk43de84oh" path="res://Scripts/slime_boss.gd" id="2_7pqeh"]
 
 [node name="SlimeBoss" instance=ExtResource("1_psag7")]
+scale = Vector2(0.55888, 0.55888)
 script = ExtResource("2_7pqeh")
 hop_speed = 300.0
 hop_height = 600.0

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BossData" load_steps=6 format=3 uid="uid://dn1mhwk42p6hw"]
+
+[ext_resource type="Script" uid="uid://dcsh7nka8ilt1" path="res://Scripts/item.gd" id="1_dvu18"]
+[ext_resource type="PackedScene" uid="uid://c6ma4klhbtq2d" path="res://Scenes/Bosses/SlimeBoss.tscn" id="1_ehci3"]
+[ext_resource type="Script" uid="uid://b3avdnkdgggrj" path="res://Scripts/boss_data.gd" id="2_qe0en"]
+[ext_resource type="Resource" uid="uid://bwgusuickm7dg" path="res://Items/Helmet.tres" id="3_mjgd8"]
+[ext_resource type="Resource" uid="uid://cpew3835qos3i" path="res://BossLogs/Flying.tres" id="5_524gx"]
+
+[resource]
+script = ExtResource("2_qe0en")
+boss_name = "Slime"
+boss_scene = ExtResource("1_ehci3")
+unlocked = true
+loot = Array[ExtResource("1_dvu18")]([ExtResource("3_mjgd8"), ExtResource("3_mjgd8")])
+next_bosses = Array[ExtResource("2_qe0en")]([ExtResource("5_524gx")])
+metadata/_custom_type_script = "uid://b3avdnkdgggrj"

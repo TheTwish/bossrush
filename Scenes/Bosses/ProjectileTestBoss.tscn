@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cjoh7n4wq7fn"]
 
-[ext_resource type="PackedScene" uid="uid://bmycmcnum767h" path="res://Scenes/BossBase.tscn" id="1_k8n4u"]
+[ext_resource type="PackedScene" uid="uid://bmycmcnum767h" path="res://Scenes/Bosses/BossBase.tscn" id="1_k8n4u"]
 [ext_resource type="Script" uid="uid://dww42cux8pt5l" path="res://Scripts/projectile_test_boss.gd" id="2_7eb57"]
 
 [node name="ProjectileTestBoss" instance=ExtResource("1_k8n4u")]
